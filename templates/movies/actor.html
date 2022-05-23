@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load movie_tag %}
+{% block title %} {{ actorsanddirectors.name }} {% endblock title %}
+
+{% block main_content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="side-bar col-lg-3">
+            <div class="search-bar w3layouts-search">
+                <h3 class="sear-head editContent" >Фильмді іздеу</h3>
+                <form action="{% url 'search' %}" method="get" class="d-flex editContent">
+                    <input type="search" placeholder="Атауын енгізіңіз..." name="q" class="form-control" required="">
+                    <button type="submit" class = "btn1 btn">
+                        <span class="fa fa-search" aria-hidden="true" ></span>
+                     </button>
+                </form>
+            </div>
+        
+            <form action = "{% url 'filter' %}" method="get" name="filter">
+                <div class="left-side my-4">
+                    <h3 class="sear-head editContent">Жанрлар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for genre in view.get_genres %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="genre" value="{{ genre.id }}">
+                                <span class="span editContent">{{ genre.name }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!-- // preference -->
+                <!-- discounts -->
+                <hr>
+                <div class="left-side">
+                    <h3 class="sear-head editContent">Жылдар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for movies in view.get_years %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="year" value="{{ movies.year }}">
+                                <span class="span editContent">{{ movies.year }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-secondary btn-block">Іздеу</button>
+            </form>
+        
+            {% get_last_movies count=3 %}
+        
+        </div>
+        <div class="left-ads-display col-lg-9">
+            {% block movie %}
+            
+            <div class="row">
+                <div class="desc1-left col-md-4">
+                    <img src="{{ actorsanddirectors.image.url }}" class="img-fluid" alt="">
+                </div>
+                <div class="desc1-right col-md-8">
+                    <h2>{{ actorsanddirectors.name }}</h2>
+                    <hr>
+            
+                    <h5 class="editContent"></h5>
+                    <ul>
+                        <li style="list-style: none">
+                            <span><b>Жасы:</b> {{ actorsanddirectors.age }} жас</span></li>
+                        
+                        <li style="list-style: none">
+                            {% for movie in actorsanddirectors.film_director.all %}
+                                {% if forloop.first %}
+                                    <span><b>Режиссер:</b>
+                                {% endif %}
+                                {% if forloop.last %}
+                                    {{ movie.title }}
+                                {% else %}
+                                    {{ movie.title }}, 
+                                {% endif %}
+                            {% endfor %}
+                            </span>
+                        </li>   
+                    </ul>
+                    <div class="row">
+                        <h3 class="editContent mt-5 mb-3 col-md-11">
+                            {{ actorsanddirectors.name }} туралы
+                        </h3>
+                        <p class="editContent col-md-11">
+                            {{ actorsanddirectors.description|safe }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                {% for movie in actorsanddirectors.film_actor.all %}
+                {% if forloop.first %}
+                    <h3 class="editContent mt-3 mb-2">
+                        Ойнаған фильмдері
+                    </h3>
+                    <hr>
+                {% endif %}
+                {% endfor %}
+                <div class="row">
+                {% for movie in actorsanddirectors.film_actor.all %}
+                    <div class="col-md-3 product-men">
+                        <div class="product-shoe-info editContent text-center mt-lg-4" >
+                            <div class="men-thumb-item">
+                                <img src="{{ movie.poster.url }}" class="img-fluid" alt="" >
+                            </div>
+                            <div class="item-info-product">
+                                <h4>
+                                    <a href="{% url 'movie_detail' movie.url %}" class="editContent" >{{ movie.title }}</a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div> 
+                {% endfor %}
+                </div>
+            </div>
+            {% endblock movie %}
+            
+            
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    function addReview(name, id) {
+        document.getElementById("contactparent").value = id;
+        document.getElementById("contactcomment").innerText = `${name}, `
+    }
+</script>
+{% endblock %}

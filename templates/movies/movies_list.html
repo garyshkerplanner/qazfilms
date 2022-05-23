@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load movie_tag %}
+{% block title %} Фильмдер {% endblock title %}
+{% block main_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="side-bar col-lg-3">
+            <div class="search-bar w3layouts-search">
+                <h3 class="sear-head editContent" >Фильмді іздеу</h3>
+                <form action="{% url 'search' %}" method="get" class="d-flex editContent">
+                    <input type="search" placeholder="Атауын енгізіңіз..." name="q" class="form-control" required="">
+                    <button type="submit" class = "btn1 btn">
+                        <span class="fa fa-search" aria-hidden="true" ></span>
+                     </button>
+                </form>
+            </div>
+        
+            <form action = "{% url 'filter' %}" method="get" name="filter">
+                <div class="left-side my-4">
+                    <h3 class="sear-head editContent">Жанрлар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for genre in view.get_genres %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="genre" value="{{ genre.id }}">
+                                <span class="span editContent">{{ genre.name }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                <div class="left-side">
+                    <h3 class="sear-head editContent">Жылдар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for movies in view.get_years %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="year" value="{{ movies.year }}">
+                                <span class="span editContent">{{ movies.year }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                <button type="submit" class="btn btn-secondary btn-block">Іздеу</button>
+            </form>
+        
+            {% get_last_movies count=3 %}
+        
+        </div>
+        
+        <div class="left-ads-display col-lg-9">
+            <div class="row">
+                {% for movie in movies_list %}
+                {% if movie.draft == False %}
+                <div class="col-md-3 product-men">
+                    <div class="product-shoe-info editContent text-center mt-lg-4" >
+                        <div class="men-thumb-item">
+                            <img src="{{ movie.poster.url }}" class="img-fluid" alt="" >
+                        </div>
+                        <div class="item-info-product">
+                            <h4 class="">
+                                <a href="{% url 'movie_detail' movie.url %}" class="editContent" >{{ movie.title }}</a>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

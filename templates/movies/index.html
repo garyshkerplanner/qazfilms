@@ -1,0 +1,96 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block title %} Басты бет {% endblock title %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+{% endblock styles %}
+{% block main_content %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>  
+
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col-8 ">
+                <h1>
+                    {{ featured_movie.title }} 
+                    <span class="badge badge-secondary">{{ featured_movie.year }}</span>
+                    <hr>
+                </h1>
+                <p>{{ featured_movie.description }}</p>
+                <a href="{% url 'movie_detail' featured_movie.url %}" class="btn btn-success">Фильмді көру</a>
+            </div>
+            <div class="col-4">
+                <img src="{{featured_movie.poster.url}}" class="img-fluid" alt="">
+            </div>
+        </div>
+
+    </div>
+    <div class="container mt-5">
+        <h2>Жүйеге Соңғы Қосылғандар</h2>
+        <hr>
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row">
+                        {% for b1 in bundle1 %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="{{ b1.poster.url }}" class="card-img-top" alt="...">
+                                <div class="card-body ">
+                                    <h5 class="card-title">{{ b1.title }} </h5>
+                                    <p style="min-height:120px" class="card-text">{{ b1.description|truncatechars:100 }}</p>
+                                    <a href="{% url 'movie_detail' b1.url %}" class="btn btn-info">Фильмді көру</a>
+
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="row">
+                        {% for b2 in bundle2 %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="{{ b2.poster.url }}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                <h5 class="card-title">{{ b2.title }} </h5>
+                                <p style="min-height:120px" class="card-text">{{ b2.description|truncatechars:100 }}</p>
+                                <a href="{% url 'movie_detail' b2.url %}" class="btn btn-info">Фильмді көру</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="row">
+                        {% for b3 in bundle3 %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <img src="{{ b3.poster.url }}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                <h5 class="card-title">{{ b3.title }} </h5>
+                                <p style="min-height:120px" class="card-text">{{ b3.description|truncatechars:100 }}</p>
+                                <a href="{% url 'movie_detail' b3.url %}" class="btn btn-info">Фильмді көру</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+           <button class="carousel-control-prev" type="button" data-target="#carouselExampleControls" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-image: url({% static 'images/left-arrow.svg' %})"></span>
+
+            </button>
+            <button class="carousel-control-next" type="button" data-target="#carouselExampleControls" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true" style="background-image: url({% static 'images/right-arrow.svg' %})"></span>
+            </button>
+        </div>
+    </div>
+
+        
+    </div>
+
+{% endblock %}

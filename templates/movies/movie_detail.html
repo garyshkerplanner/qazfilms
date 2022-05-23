@@ -1,0 +1,245 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% load movie_tag %}
+{% load humanize %}
+{% block title %} {{ movies.title }} {% endblock title %}
+{% block main_content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="side-bar col-lg-3">
+            <div class="search-bar w3layouts-search">
+                <h3 class="sear-head editContent" >Фильмді іздеу</h3>
+                <form action="{% url 'search' %}" method="get" class="d-flex editContent">
+                    <input type="search" placeholder="Атауын енгізіңіз..." name="q" class="form-control" required="">
+                    <button type="submit" class = "btn1 btn">
+                        <span class="fa fa-search" aria-hidden="true" ></span>
+                     </button>
+                </form>
+            </div>
+        
+            <form action = "{% url 'filter' %}" method="get" name="filter">
+                <div class="left-side my-4">
+                    <h3 class="sear-head editContent">Жанрлар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for genre in view.get_genres %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="genre" value="{{ genre.id }}">
+                                <span class="span editContent">{{ genre.name }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                <div class="left-side">
+                    <h3 class="sear-head editContent">Жылдар</h3>
+                    <ul class="w3layouts-box-list">
+                        {% for movies in view.get_years %}
+                            <li style="list-style: none" class="editContent">
+                                <input type="checkbox" class="checked" name="year" value="{{ movies.year }}">
+                                <span class="span editContent">{{ movies.year }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <hr>
+                
+                <button class="btn btn-secondary btn-block" type="submit">Іздеу</button>
+            </form>
+        
+            {% get_last_movies count=3 %}
+        
+        </div>
+        
+        <div class="left-ads-display col-lg-9">
+            <div class="row">
+                <div class="col-4">
+                    <img src="{{ movies.poster.url }}" class="img-fluid" alt="">
+                </div>
+                <div class="col-8">
+                    <h1 class="movie_title mb-2">{{ movies.title }}</h1>
+                    <div class="col">
+                        <div class="row">
+                            <h5 class="mr-2"><span class="badge bg-secondary text-light">{{ movies.year }}</span></h5>
+                            {% for genre in movies.genres.all %}
+                                <h5 class="mr-2"><span class="badge bg-secondary text-light">{{ genre.name}}</span></h5>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-2">
+                                    <span><b>Режиссер:</b></span>
+                                </div>
+                                <div class="col-10">
+                                    {% for director in movies.directors.all %}
+                                        {% if forloop.last %}
+                                            <a href="{% url 'actor_detail' director.name %}">{{ director.name }}</a>
+                                        {% else %}
+                                            <a href="{% url 'actor_detail' director.name %}">{{ director.name }}, </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <span><b>Актерлар:</b></span>
+                                </div>
+                                <div class="col-10">
+                                    {% for actor in movies.actors.all %}
+                                        {% if forloop.last %}
+                                            <a href="{% url 'actor_detail' actor.name %}">{{ actor.name }}</a>
+                                        {% else %}
+                                            <a href="{% url 'actor_detail' actor.name %}">{{ actor.name }}, </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <span><b>Жанр:</b></span>
+                                </div>
+                                <div class="col-10">
+                                    {% for genre in movies.genres.all %}
+                                        <span class="mr-2">{{ genre.name}}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <span><b>Рейтинг:</b></span>
+                                </div>
+                                <div class="col-10">
+                                    <form action="{% url 'add_rating' %}" method="post" name="rating">
+                                        {% csrf_token %}
+                                        <input type="hidden" value="{{ movies.id }}" name="movie">
+                                        <span class="rating">
+                                            {% for k, v in star_form.fields.star.choices %}
+                                                <input id="rating{{ v }}" type="radio" name="star" value="{{ k }}" {% if stars == v %} checked {% endif %}>
+                                                <label for="rating{{ v }}">{{ k }}</label>
+                                            {% endfor %}
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                            <hr>
+        
+                            <div class="row">
+                                <div class="col-10">
+                                    <h4>Фильм туралы:</h4>
+                                    <p>{{ movies.description }}</p>
+                                </div>
+                                
+                            </div>
+                            <hr>
+                        </div>
+
+                    </div>
+        
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col">
+                    <h3>Трейлер:</h3>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item mt-4" width="100%" height="500"src="{{ movies.trailer_url}}" clipboard-write; encrypted-media; gyroscope; picture-in-picture allowfullscreen ></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <form action="{{movies.movie_url}}"><button type="submit" class="mt-3 btn btn-info btn-block py-3">Фильмді көру</button></form>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-4">
+                <div class="col">
+                        {% for image in movies.movieshots_set.all %}
+                            <img src="{{ image.image.url }}" class="img-movie-shots "alt="{{ image.description }}">
+                        {% endfor %}
+                    
+                </div>
+        
+            </div>
+            <hr>
+
+            <div class="single-form-left">
+                <div class="contact-single">
+                    <h3 class="editContent mt-4">
+                        <span class="sub-tittle editContent">({{ movies.comments_set.count }})</span>
+                        Пікір қалдыру
+                    </h3>
+                
+                    <div class="row mt-2">
+                        <div class="col">
+                            {% for comment in movies.get_comment %}
+                            <hr>
+                            <div class="media">
+                                <img src="{% static 'images/ava2.png'%}" class="mr-3 img-fluid" alt="image">
+                                <div class="media-body mt-2">
+                                    <h5 class="mt-0 editContent">
+                                        {{ comment.user }}
+                                    </h5>
+                                    <small> {{comment.date|naturaltime }}</small>
+                                    <p class="mt-2 editContent">
+                                        {{ comment.text }}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        
+                        </div>
+                    </div>
+                
+                {% if user.is_authenticated %}
+                <form action="{% url 'leave_comment' movies.url %}" method="post" class="mt-4"
+                    id="formComment">
+                  {% csrf_token %}
+                  <div class="form-group editContent">
+                      <label for="contactcomment" class="editContent">
+                          Сіздің пікіріңіз *
+                      </label>
+                      <textarea class="form-control border" rows="5" name="text" id="contactcomment" required=""></textarea>
+                  </div>
+                  <button type="submit"
+                          class="mt-3 btn btn-info btn-block py-3" value="Send">
+                      Жіберу
+                  </button>
+                </form>
+                {% else %}
+                <div class="form-group editContent">
+                    <label for="contactcomment" class="editContent">
+                        Өз пікіріңізді қалдыру үшін жүйеге 
+                        <a href="{% url 'account_login' %}">кіріңіз</a>
+                    </label>
+                </div>
+                {% endif %}
+                </div>
+            </div>
+<!--
+            <div class="sn-related">
+                <h2>Пікірлер:</h2>
+                
+                <h3>Қолданушы пікірлері:</h3>
+                      {% for comment in movies.get_comment  %}
+                      <ul>
+                          <li><b>*{{comment.user}} left this on {{comment.date}}: *</b></li>
+                          <p>{{comment.text}} </p>
+                      </ul> 
+                      {%endfor%}
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'leave_comment' movies.url %}" method="post" name="review">
+                        {% csrf_token %}
+                            <textarea name="text" cols="80%" rows="5%" required></textarea>
+                        <input type="submit" value="Send">
+                    </form>
+                    {%endif%}
+            </div>
+ -->
+    </div>
+</div>
+
+</div>
+{% endblock %}
